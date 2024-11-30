@@ -8,13 +8,135 @@ public class Sotring {
         System.out.println();
     }
 
-    public static int[] generateArr(int size){
+    public static int[] generateRandomArr(int size){
         Random random = new Random();
         int[] arr = new int[size];
         for (int i = 0; i < size; ++i){
             arr[i] = random.nextInt(10000);
         }
         return arr;
+    }
+
+    public static int[] generateOrderedArr(int size){
+        int[] arr = new int[size];
+        for (int i = 0; i < size; ++i){
+            arr[i] = i;
+        }
+        return arr;
+    }
+
+    public static int[] generateBackOrderedArr(int size){
+        int[] arr = new int[size];
+        for (int i = 0; i < size; ++i){
+            arr[i] = size-i;
+        }
+        return arr;
+    }
+
+    public static void test(int type, int size){
+        int[] array = generateRandomArr(size);
+        if (type == 1){
+            array = generateOrderedArr(size);
+
+        }
+        else if (type == 2){
+            array = generateBackOrderedArr(size);
+        }
+        Map<Integer, String> map = new TreeMap<>();
+        System.out.println("Пузырьковая сортировка".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        long startTime = System.nanoTime();
+        printArr(bubbleSort(array));
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+        map.put((int) duration, "Пузырьковая сортировка");
+        System.out.println("-".repeat(100));
+
+        System.out.println("Шейкерная сортировка".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        startTime = System.nanoTime();
+        printArr(shakerSort(array));
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        map.put((int) duration, "Шейкерная сортировка");
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+
+        System.out.println("-".repeat(100));
+
+        System.out.println("Сортировка вставками".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        startTime = System.nanoTime();
+        printArr(insertionSort(array));
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        map.put((int) duration, "Сортировка вставками");
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+
+        System.out.println("-".repeat(100));
+
+        System.out.println("Сортировка выбором".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        startTime = System.nanoTime();
+        printArr(selectionSort(array));
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        map.put((int) duration, "Сортировка выбором");
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+
+        System.out.println("-".repeat(100));
+
+        System.out.println("Быстрая сортировка".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        startTime = System.nanoTime();
+        printArr(quickSort(array));
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        map.put((int) duration, "Быстрая сортировка");
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+
+        System.out.println("-".repeat(100));
+
+        System.out.println("Сортировка кучей".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        startTime = System.nanoTime();
+        printArr(heapSort(array));
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        map.put((int) duration, "Сортировка кучей");
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+
+        System.out.println("-".repeat(100));
+
+        System.out.println("Сортировка слиянием".toUpperCase());
+        System.out.println("Исходный массив:");
+        printArr(array);
+        System.out.println("Отсортированный массив:");
+        startTime = System.nanoTime();
+        printArr(mergeSort(array));
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        map.put((int) duration, "Сортировка слиянием");
+        System.out.println("Время выполнения: " + duration + " наносекунд");
+
+        System.out.println("-".repeat(100));
+
+        System.out.println("Топ сортировок на "+size+" элементов");
+        map.forEach((key, value) -> {
+            System.out.println("Алгоритм: " + value + ", Время выполнения: " + key + " наносекунд");
+        });
     }
 
     /**
@@ -266,144 +388,51 @@ public class Sotring {
      *
      * Этот алгоритм хорошо подходит для больших массивов и когда требуется стабильная сортировка.
      */
-    public static int[] mergeSort(int[] array){
+    public static int[] mergeSort(int[] array) {
         int[] arr = array.clone();
         mergeSortAlg(arr);
         return arr;
     }
 
-    public static void mergeSortAlg(int[] arr){
+    public static void mergeSortAlg(int[] arr) {
         int length = arr.length;
-        if (length <= 1){
+        if (length <= 1) {
             return;
         }
-        int mid = length/2;
+        int mid = length / 2;
         int[] leftHalf = Arrays.copyOfRange(arr, 0, mid);
         int[] rightHalf = Arrays.copyOfRange(arr, mid, length);
-        mergeSort(leftHalf);
-        mergeSort(rightHalf);
-
+        mergeSortAlg(leftHalf);
+        mergeSortAlg(rightHalf);
         merge(arr, leftHalf, rightHalf);
     }
 
-    public static void merge(int[] result, int[] left, int[] right){
+    public static void merge(int[] result, int[] left, int[] right) {
         int leftIndex = 0;
         int rightIndex = 0;
         int resultIndex = 0;
-        while (leftIndex < left.length && rightIndex < right.length){
-            if (left[leftIndex] <= right[rightIndex]){
+        while (leftIndex < left.length && rightIndex < right.length) {
+            if (left[leftIndex] <= right[rightIndex]) {
                 result[resultIndex++] = left[leftIndex++];
             }
-            else{
+            else {
                 result[resultIndex++] = right[rightIndex++];
             }
         }
-        while (leftIndex < left.length){
+        while (leftIndex < left.length) {
             result[resultIndex++] = left[leftIndex++];
         }
-        while (rightIndex < right.length){
+        while (rightIndex < right.length) {
             result[resultIndex++] = right[rightIndex++];
         }
     }
 
-
+    //type - тип заполнения массива
+    //size - размер массиива
+    //type == 1 - упорядоченное по возрастанию заполнение массива
+    //type == 2 - упорядоченное по возрастанию заполнение массива
+    //другой type - случаное заполненеи массива
     public static void main(String[] args) {
-        int size = 10000;
-        int[] array = generateArr(size);
-        Map<Integer, String> map = new TreeMap<>();
-        System.out.println("Пузырьковая сортировка".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        long startTime = System.nanoTime();
-        printArr(bubbleSort(array));
-        long endTime = System.nanoTime();
-        long duration = endTime - startTime;
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-        map.put((int) duration, "Пузырьковая сортировка");
-        System.out.println("-".repeat(100));
-
-        System.out.println("Шейкерная сортировка".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        startTime = System.nanoTime();
-        printArr(shakerSort(array));
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        map.put((int) duration, "Шейкерная сортировка");
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-
-        System.out.println("-".repeat(100));
-
-        System.out.println("Сортировка вставками".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        startTime = System.nanoTime();
-        printArr(insertionSort(array));
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        map.put((int) duration, "Сортировка вставками");
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-
-        System.out.println("-".repeat(100));
-
-        System.out.println("Сортировка выбором".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        startTime = System.nanoTime();
-        printArr(selectionSort(array));
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        map.put((int) duration, "Сортировка выбором");
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-
-        System.out.println("-".repeat(100));
-
-        System.out.println("Быстрая сортировка".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        startTime = System.nanoTime();
-        printArr(quickSort(array));
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        map.put((int) duration, "Быстрая сортировка");
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-
-        System.out.println("-".repeat(100));
-
-        System.out.println("Сортировка кучей".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        startTime = System.nanoTime();
-        printArr(heapSort(array));
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        map.put((int) duration, "Сортировка кучей");
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-
-        System.out.println("-".repeat(100));
-
-        System.out.println("Сортировка слиянием".toUpperCase());
-        System.out.println("Исходный массив:");
-        printArr(array);
-        System.out.println("Отсортированный массив:");
-        startTime = System.nanoTime();
-        printArr(mergeSort(array));
-        endTime = System.nanoTime();
-        duration = endTime - startTime;
-        map.put((int) duration, "Сортировка слиянием");
-        System.out.println("Время выполнения: " + duration + " наносекунд");
-
-        System.out.println("-".repeat(100));
-
-        System.out.println("Топ сортировок на "+size+" элементов");
-        map.forEach((key, value) -> {
-            System.out.println("Алгоритм: " + value + ", Время выполнения: " + key + " наносекунд");
-        });
+        test(3, 1000);
     }
 }
